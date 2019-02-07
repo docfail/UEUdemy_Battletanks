@@ -37,4 +37,8 @@ private:
 
 	UTankBarrel * Barrel = nullptr;
 	UTankTurret * Turret = nullptr;
+	
 };
+
+// Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.
+#define BT_DRAW_DEBUG true 

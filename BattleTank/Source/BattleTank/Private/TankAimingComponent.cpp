@@ -12,7 +12,7 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -20,7 +20,6 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::AimAt(FVector AimPoint, float LaunchSpeed)
 {
-	bool DrawDebugLine = true;
 	if (!Barrel) {
 		return;
 	}
@@ -38,15 +37,12 @@ void UTankAimingComponent::AimAt(FVector AimPoint, float LaunchSpeed)
 		ESuggestProjVelocityTraceOption::DoNotTrace,	// Ignore collision, trace as though nothing is in the path
 		FCollisionResponseParams::DefaultResponseParam,
 		TArray<AActor*>(),	// Actors to ignore, none by default
-		DrawDebugLine	// Should we draw a debug line showing the path traced?
+		BT_DRAW_DEBUG	// Should we draw a debug line showing the path traced?
 	);
-	auto Time = GetWorld()->GetTimeSeconds();
+	
 	if (bHaveAimSolution) {
 		auto AimDirection = LaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
-		UE_LOG(LogTemp, Warning, TEXT("%f: Firing at %s"), Time, *AimDirection.ToString());
-	} else {
-		UE_LOG(LogTemp, Warning, TEXT("%f: No Aim Solution Found!!!"), Time);
 	}
 }
 
