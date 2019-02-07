@@ -18,7 +18,6 @@ AProjectile::AProjectile()
 void AProjectile::LaunchProjectile(float LaunchSpeed)
 {
 	auto Time = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("%f: Tank Fires at %f"), Time, LaunchSpeed);
 	ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector*LaunchSpeed);
 	ProjectileMovement->Activate();
 }
