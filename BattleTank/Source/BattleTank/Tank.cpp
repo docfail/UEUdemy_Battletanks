@@ -1,6 +1,7 @@
 // Doctor Fail 2018
 
 #include "Tank.h"
+#include "TankAimingComponent.h"
 
 // Sets default values
 ATank::ATank()
@@ -13,7 +14,12 @@ ATank::ATank()
 
 void ATank::AimAt(FVector AimPoint)
 {
-	TankAimingComponent->AimAt(AimPoint);
+	TankAimingComponent->AimAt(AimPoint, LaunchSpeed);
+}
+
+void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
+{
+	TankAimingComponent->SetBarrelReference(BarrelToSet);
 }
 
 // Called when the game starts or when spawned
