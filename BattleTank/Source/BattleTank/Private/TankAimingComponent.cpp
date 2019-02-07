@@ -5,6 +5,7 @@
 #include "Engine/StaticMesh.h"
 #include "Classes/Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -39,20 +40,25 @@ void UTankAimingComponent::AimAt(FVector AimPoint, float LaunchSpeed)
 		TArray<AActor*>(),	// Actors to ignore, none by default
 		DrawDebugLine	// Should we draw a debug line showing the path traced?
 	);
+	auto Time = GetWorld()->GetTimeSeconds();
 	if (bHaveAimSolution) {
 		auto AimDirection = LaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
-		UE_LOG(LogTemp, Warning, TEXT("Firing at %s"), *AimDirection.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("%f: Firing at %s"), Time, *AimDirection.ToString());
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("%f: No Aim Solution Found!!!"), Time);
 	}
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
 {
+	if (!BarrelToSet) { return; }
 	Barrel = BarrelToSet;
 }
 
-void UTankAimingComponent::SetTurretReference(UStaticMeshComponent * TurretToSet)
+void UTankAimingComponent::SetTurretReference(UTankTurret * TurretToSet)
 {
+	if (!TurretToSet) { return; }
 	Turret = TurretToSet;
 }
 
@@ -80,6 +86,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 	
-	Barrel->Elevate(5);
+	Barrel->Elevate(DeltaRotator.Pitch);
+	Turret->Rotate(DeltaRotator.Yaw);
 }
 
