@@ -9,28 +9,22 @@ void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld();
-	ATank* tank = GetPlayerTank();
-	UE_LOG(LogTemp, Warning, TEXT("AIController found player: %s"), *((tank) ? tank->GetName() : "None"));
+	PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	ControlledTank = Cast<ATank>(GetPawn());
+	if (!PlayerTank || !ControlledTank) UE_LOG(LogTemp, Warning, TEXT("TankAIController::BeginPlay():\nSOMETHING HAS GONE WRONG(Neither should be None):\nPlayerTank is: %s \nControlledTank is: %s"), *((PlayerTank) ? PlayerTank->GetName() : "None"), *((ControlledTank) ? ControlledTank->GetName() : "None"));;
 }
 
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	ATank* PlayerTank = GetPlayerTank();
+	if (!PlayerTank || !ControlledTank) {
+		float Time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: TankAIController::Tick():\nSOMETHING HAS GONE WRONG(Neither should be None):\nPlayerTank is: %s \nControlledTank is: %s"), Time ,*((PlayerTank) ? PlayerTank->GetName() : "None"), *((ControlledTank) ? ControlledTank->GetName() : "None"));;
+		return;
+	}
 	if (PlayerTank) {
-		GetControlledTank()->AimAt(PlayerTank->GetActorLocation());
-	}
-}
+		ControlledTank->AimAt(PlayerTank->GetActorLocation());
 
-ATank* ATankAIController::GetControlledTank() {
-	return Cast<ATank>(GetPawn());
-}
-
-ATank * ATankAIController::GetPlayerTank()
-{
-	auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (!PlayerPawn) {
-		return nullptr;
+		ControlledTank->Fire();
 	}
-	return Cast<ATank>(PlayerPawn);
 }

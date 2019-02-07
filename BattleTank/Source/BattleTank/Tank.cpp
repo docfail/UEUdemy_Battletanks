@@ -6,6 +6,8 @@
 #include "Projectile.h"
 #include "TankBarrel.h"
 
+//#define BT_CURRENT_GAME_TIME GetWorld()->GetTimeSeconds()
+
 // Sets default values
 ATank::ATank()
 {
@@ -33,10 +35,16 @@ void ATank::SetTurretReference(UTankTurret * TurretToSet)
 
 void ATank::Fire()
 {
-	
-	if (!Barrel) return;
-	auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("Projectile")), Barrel->GetSocketRotation(FName("Projectile")));
-	Projectile->LaunchProjectile(LaunchSpeed);
+	bool isReloaded = ((GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeInSeconds);
+	if (Barrel && isReloaded) {
+		
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("Projectile")), Barrel->GetSocketRotation(FName("Projectile")));
+		
+		Projectile->LaunchProjectile(LaunchSpeed);
+		
+		LastFireTime = GetWorld()->GetTimeSeconds();
+		// LastFireTime = FPlatformTime::Seconds(); <- This method returns real-world time. In other words, unlike the GetWorld method, it isnt affected by in game time dilation/pausing.
+	}
 }
 
 // Called when the game starts or when spawned
