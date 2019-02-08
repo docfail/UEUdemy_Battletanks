@@ -1,18 +1,16 @@
 // Doctor Fail 2018
 
 #include "TankPlayerController.h"
+#include "TankAimingComponent.h"
 #include "Engine/World.h"
-#include "Tank.h"
 
-ATank* ATankPlayerController::GetControlledTank() const {
-	return Cast<ATank>(GetPawn());
-}
 
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	ATank* tank = GetControlledTank();
-	UE_LOG(LogTemp, Warning, TEXT("TankPlayerController::BeginPlay() : Controlled Tank: %s"),*((tank)?tank->GetName():"None"));
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	BT_POINTER_GUARD(AimingComponent);
+	FoundAimingComponent(AimingComponent);
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -25,11 +23,11 @@ void ATankPlayerController::Tick(float DeltaTime)
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!GetControlledTank()) { return; }
-
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	BT_POINTER_GUARD(AimingComponent);
 	FVector HitLocation;
 	if (GetSightRayHitLocation(HitLocation)) {
-		GetControlledTank()->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 	}
 }
 
@@ -37,11 +35,11 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector & OutHitLocation) con
 {
 	int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
-	FVector2D ScreenLocation = FVector2D(ViewportSizeX*CrosshairXLocation,ViewportSizeY*CrossHairYLocation);
+	FVector2D ScreenLocation = FVector2D(ViewportSizeX*CrosshairXLocation, ViewportSizeY*CrossHairYLocation);
 
 
 	FVector LookDirection;
-	if (GetLookDirection(ScreenLocation,LookDirection)) {
+	if (GetLookDirection(ScreenLocation, LookDirection)) {
 		GetLookVectorHitLocation(LookDirection, OutHitLocation);
 	}
 	return true;

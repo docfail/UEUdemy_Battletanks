@@ -6,7 +6,7 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
-class ATank;
+#define BT_POINTER_GUARD(pointers) if(!ensure(pointers)) { return; }
 
 /**
  * 
@@ -21,9 +21,9 @@ class BATTLETANK_API ATankAIController : public AAIController
 	virtual void Tick(float) override;
 
 private:
-	ATank* ControlledTank = nullptr;
+	APawn* ControlledTank = nullptr;
 
-	ATank* PlayerTank = nullptr;
+	APawn* PlayerTank = nullptr;
 public:
 	UPROPERTY(EditDefaultsOnly)
 		float AcceptanceRadius = 3000.0f; // How close can the AI tank get to the player tank.

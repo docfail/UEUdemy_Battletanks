@@ -6,7 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
-class ATank;
+#define BT_POINTER_GUARD(pointers) if(!ensure(pointers)) { return; }
+
+class UTankAimingComponent;
 
 /**
  * 
@@ -15,13 +17,18 @@ UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
+
 public:
-	ATank* GetControlledTank() const;
 
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float) override;
+
 private:
+
 	void AimTowardsCrosshair();
 	bool GetSightRayHitLocation(FVector &) const;
 	bool GetLookDirection(FVector2D, FVector &) const;

@@ -4,3 +4,4 @@
 
 #include "CoreMinimal.h"
 
+#define BT_POINTER_GUARD(pointers) if(!ensure(pointers)) { return; }
