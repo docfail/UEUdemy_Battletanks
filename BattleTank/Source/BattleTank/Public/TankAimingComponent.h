@@ -41,4 +41,4 @@ private:
 };
 
 // Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.
-#define BT_DRAW_DEBUG true 
+#define BT_DRAW_DEBUG false 

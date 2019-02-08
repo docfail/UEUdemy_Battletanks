@@ -16,4 +16,7 @@ class BATTLETANK_API UTankTrack : public UStaticMeshComponent
 public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void SetThrottle(float Throttle); // Note: if you don't put the parameter name on UFunctions, they wont compile. The header tool reads this for the blueprint editor.
+	// Max force per track in newtons
+	UPROPERTY(EditDefaultsOnly)
+	float TankMaxDrivingForce = 40000000; // 20Mg tank @ 1g acceleration
 };
