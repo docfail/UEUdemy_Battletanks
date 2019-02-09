@@ -7,12 +7,35 @@
 #include "TankBarrel.h"
 #include "TankTurret.h"
 #include "Projectile.h"
+
+#define CurrentTime GetWorld()->GetTimeSeconds()
+
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+{
+	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeInSeconds) {
+		FiringState = EFiringState::Reloading;
+	} else if(IsBarrelMoving()){
+		FiringState = EFiringState::Aiming;
+	} else {
+		FiringState = EFiringState::Locked;
+	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving() {
+	if (!ensure(Barrel)) { return false; }
+	return !AimDirection.Equals(Barrel->GetForwardVector(),0.01F);
+}
+
+void UTankAimingComponent::BeginPlay()
+{
+	LastFireTime = GetWorld()->GetTimeSeconds();
+}
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
 }
@@ -40,7 +63,7 @@ void UTankAimingComponent::AimAt(FVector AimPoint)
 	);
 	
 	if (bHaveAimSolution) {
-		auto AimDirection = LaunchVelocity.GetSafeNormal();
+		AimDirection = LaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
 	}
 }
@@ -65,9 +88,9 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 void UTankAimingComponent::Fire()
 {
-	BT_POINTER_GUARD(Barrel && ProjectileBlueprint);
-	if (((GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeInSeconds)) {
-
+	if (FiringState != EFiringState::Reloading) {
+		BT_POINTER_GUARD(Barrel);
+		BT_POINTER_GUARD(ProjectileBlueprint);
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("Projectile")), Barrel->GetSocketRotation(FName("Projectile")));
 
 		Projectile->LaunchProjectile(LaunchSpeed);

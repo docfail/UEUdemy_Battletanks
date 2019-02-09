@@ -39,6 +39,9 @@ protected:
 	EFiringState FiringState = EFiringState::Reloading;
 private:
 
+	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	bool IsBarrelMoving();
+	void BeginPlay() override;
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 
@@ -55,6 +58,8 @@ private:
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 	double LastFireTime = 0;
+
+	FVector AimDirection = FVector(0);
 };
 
 // Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.
