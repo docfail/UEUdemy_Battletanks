@@ -8,6 +8,7 @@
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	if (!GetPawn()) return;
 	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	BT_POINTER_GUARD(AimingComponent);
 	FoundAimingComponent(AimingComponent);

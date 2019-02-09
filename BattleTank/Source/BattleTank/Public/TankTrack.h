@@ -19,4 +19,10 @@ public:
 	// Max force per track in newtons
 	UPROPERTY(EditDefaultsOnly)
 	float TankMaxDrivingForce = 40000000; // 20Mg tank @ 1g acceleration
+	UTankTrack();
+	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	void BeginPlay() override;
+private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit);
 };
