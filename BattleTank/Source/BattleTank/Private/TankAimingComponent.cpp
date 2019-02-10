@@ -68,6 +68,11 @@ void UTankAimingComponent::AimAt(FVector AimPoint)
 	}
 }
 
+EFiringState UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
+}
+
 void UTankAimingComponent::Initialize(UTankBarrel * BarrelToSet, UTankTurret * TurretToSet) {
 	Barrel = BarrelToSet;
 	Turret = TurretToSet;
@@ -82,7 +87,11 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 	
 	Barrel->Elevate(DeltaRotator.Pitch);
-	Turret->Rotate(DeltaRotator.Yaw);
+	if (FMath::Abs(DeltaRotator.Yaw) <= 180.0f) {
+		Turret->Rotate(DeltaRotator.Yaw);
+	} else {
+		Turret->Rotate(-(DeltaRotator.Yaw-180.0f));
+	}
 }
 
 
@@ -96,6 +105,7 @@ void UTankAimingComponent::Fire()
 		Projectile->LaunchProjectile(LaunchSpeed);
 
 		LastFireTime = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%s Firing!"), *(GetOwner()->GetName()));
 		// LastFireTime = FPlatformTime::Seconds(); <- This method returns real-world time. In other words, unlike the GetWorld method, it isnt affected by in game time dilation/pausing.
 	}
 }

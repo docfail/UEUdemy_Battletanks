@@ -29,6 +29,7 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 
 public:
 	void AimAt(FVector);
+	EFiringState GetFiringState() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialize(UTankBarrel * BarrelToSet, UTankTurret * TurretToSet);

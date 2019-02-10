@@ -21,8 +21,13 @@ public:
 	float TankMaxDrivingForce = 40000000; // 20Mg tank @ 1g acceleration
 	UTankTrack();
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	void ApplySidewaysForce();
 	void BeginPlay() override;
+	void DriveTrack();
 private:
+
+	float CurrentThrottle = 0;
+
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit);
 };

@@ -3,17 +3,14 @@
 #include "TankTrack.h"
 
 UTankTrack::UTankTrack() {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UTankTrack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime,TickType,ThisTickFunction);
-	auto SlippageSpeed = FVector::DotProduct(GetComponentVelocity(), GetRightVector());
-	auto CorrectionAcceleration = (-SlippageSpeed / DeltaTime)*GetRightVector();
-	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
-	TankRoot->AddForce(TankRoot->GetMass()*CorrectionAcceleration/2);
 }
+
 
 void UTankTrack::BeginPlay()
 {
@@ -22,12 +19,27 @@ void UTankTrack::BeginPlay()
 }
 
 void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) {
-	UE_LOG(LogTemp, Warning, TEXT("%s: OnHit Event Fired!!!"), *GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s: OnHit Event Fired!!!"), *GetName());
+	DriveTrack();
+	ApplySidewaysForce();
+	CurrentThrottle = 0.0f;
+}
+
+void UTankTrack::ApplySidewaysForce()
+{
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+	auto SlippageSpeed = FVector::DotProduct(GetComponentVelocity(), GetRightVector());
+	auto CorrectionAcceleration = (-SlippageSpeed / DeltaTime)*GetRightVector();
+	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
+	TankRoot->AddForce(TankRoot->GetMass()*CorrectionAcceleration / 2);
 }
 
 // Set the speed for this tank track
 void UTankTrack::SetThrottle(float Throttle) {
-	auto ForceApplied = GetForwardVector() * Throttle * TankMaxDrivingForce;
+	CurrentThrottle = FMath::Clamp(CurrentThrottle + Throttle,-1.0f,1.0f);
+}
+void UTankTrack::DriveTrack() {
+	auto ForceApplied = GetForwardVector() * CurrentThrottle * TankMaxDrivingForce;
 	auto ForceLocation = GetComponentLocation();
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
