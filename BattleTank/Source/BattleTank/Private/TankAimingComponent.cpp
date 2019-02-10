@@ -12,7 +12,9 @@
 
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
-	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeInSeconds) {
+	if (RoundsLeft <= 0) {
+		FiringState = EFiringState::OutOfAmmo;
+	} else if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeInSeconds) {
 		FiringState = EFiringState::Reloading;
 	} else if(IsBarrelMoving()){
 		FiringState = EFiringState::Aiming;
@@ -97,7 +99,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 void UTankAimingComponent::Fire()
 {
-	if (FiringState != EFiringState::Reloading) {
+	if (FiringState == EFiringState::Locked || FiringState == EFiringState::Aiming) {
 		BT_POINTER_GUARD(Barrel);
 		BT_POINTER_GUARD(ProjectileBlueprint);
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("Projectile")), Barrel->GetSocketRotation(FName("Projectile")));
@@ -105,7 +107,14 @@ void UTankAimingComponent::Fire()
 		Projectile->LaunchProjectile(LaunchSpeed);
 
 		LastFireTime = GetWorld()->GetTimeSeconds();
+
+		RoundsLeft--;
 		UE_LOG(LogTemp, Warning, TEXT("%s Firing!"), *(GetOwner()->GetName()));
 		// LastFireTime = FPlatformTime::Seconds(); <- This method returns real-world time. In other words, unlike the GetWorld method, it isnt affected by in game time dilation/pausing.
 	}
+}
+
+int UTankAimingComponent::GetRoundsLeft() const
+{
+	return RoundsLeft;
 }

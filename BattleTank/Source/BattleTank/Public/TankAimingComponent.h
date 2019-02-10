@@ -14,7 +14,8 @@ enum class EFiringState : uint8
 {
 	Reloading,
 	Aiming,
-	Locked
+	Locked,
+	OutOfAmmo
 };
 
 class UTankBarrel;
@@ -35,6 +36,8 @@ public:
 	void Initialize(UTankBarrel * BarrelToSet, UTankTurret * TurretToSet);
 	UFUNCTION(BlueprintCallable, Category = Firing)
 	void Fire();
+	UFUNCTION(BlueprintCallable, Category = Firing)
+	int GetRoundsLeft() const;
 protected:
 	UPROPERTY(BlueprintReadOnly,Category="State")
 	EFiringState FiringState = EFiringState::Reloading;
@@ -61,6 +64,8 @@ private:
 	double LastFireTime = 0;
 
 	FVector AimDirection = FVector(0);
+
+	int RoundsLeft = 3;
 };
 
 // Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.
