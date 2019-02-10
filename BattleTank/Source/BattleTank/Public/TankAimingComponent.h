@@ -37,7 +37,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Firing)
 	void Fire();
 	UFUNCTION(BlueprintCallable, Category = Firing)
-	int GetRoundsLeft() const;
+	int32 GetRoundsLeft() const;
 protected:
 	UPROPERTY(BlueprintReadOnly,Category="State")
 	EFiringState FiringState = EFiringState::Reloading;
@@ -64,8 +64,8 @@ private:
 	double LastFireTime = 0;
 
 	FVector AimDirection = FVector(0);
-
-	int RoundsLeft = 3;
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	int32 RoundsLeft = 3;
 };
 
 // Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.
