@@ -15,7 +15,7 @@ ATank::ATank()
 	SetRootComponent(TankMesh);
 
 	DeathExplosion = CreateDefaultSubobject<UParticleSystemComponent>(FName("Impact Blast"));
-	DeathExplosion->SetupAttachment(RootComponent);
+	DeathExplosion->SetupAttachment(RootComponent, FName("Turret"));
 	DeathExplosion->bAutoActivate = false;
 }
 
