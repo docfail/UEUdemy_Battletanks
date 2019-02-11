@@ -24,6 +24,11 @@ private:
 	APawn* ControlledTank = nullptr;
 
 	APawn* PlayerTank = nullptr;
+
+	void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+	void OnPossessedDeath();
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Setup")
 	float AcceptanceRadius = 8000.0f; // How close can the AI tank get to the player tank.

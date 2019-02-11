@@ -55,9 +55,9 @@ private:
 	UTankTurret * Turret = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
-	float LaunchSpeed = 4000;
+	float LaunchSpeed = 8000;
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
-	float ReloadTimeInSeconds = 3.0f; // If it says EditAnywhere, you can edit it on every instance. If its on EditDefaultsOnly it can only be edited on the blueprint.
+	float ReloadTimeInSeconds = 2.0f; // If it says EditAnywhere, you can edit it on every instance. If its on EditDefaultsOnly it can only be edited on the blueprint.
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
@@ -65,7 +65,7 @@ private:
 
 	FVector AimDirection = FVector(0);
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
-	int32 RoundsLeft = 3;
+	int32 RoundsLeft = 20;
 };
 
 // Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.

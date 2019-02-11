@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "TankAimingComponent.h"
+#include "Tank.h"
 
 void ATankAIController::BeginPlay()
 {
@@ -24,4 +25,23 @@ void ATankAIController::Tick(float DeltaTime)
 	if (AimingComponent->GetFiringState() == EFiringState::Locked) {
 		AimingComponent->Fire();
 	}
+}
+
+void ATankAIController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn) {
+		auto PossessedTank = Cast<ATank>(InPawn);
+		BT_POINTER_GUARD(PossessedTank);
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankAIController::OnPossessedDeath);
+	}
+}
+
+void ATankAIController::OnPossessedDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Received!"));
+	if (!GetPawn()) {
+		return;
+	}
+	GetPawn()->DetachFromControllerPendingDestroy();
 }
