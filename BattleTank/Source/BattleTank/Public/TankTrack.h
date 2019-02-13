@@ -14,20 +14,17 @@ class BATTLETANK_API UTankTrack : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 public:
+	UTankTrack();
+
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void SetThrottle(float Throttle); // Note: if you don't put the parameter name on UFunctions, they wont compile. The header tool reads this for the blueprint editor.
 	// Max force per track in newtons
 	UPROPERTY(EditDefaultsOnly)
 	float TankMaxDrivingForce = 40000000; // 20Mg tank @ 1g acceleration
-	UTankTrack();
-	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
-	void ApplySidewaysForce();
-	void BeginPlay() override;
-	void DriveTrack();
 private:
 
-	float CurrentThrottle = 0;
+	void DriveTrack(float);
 
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit);
+	TArray<class ASprungWheel*> GetWheels() const;
+
 };
