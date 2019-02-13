@@ -65,7 +65,7 @@ private:
 
 	FVector AimDirection = FVector(0);
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
-	int32 RoundsLeft = 20;
+	int32 RoundsLeft = 35;
 };
 
 // Used in AimAt to determine if the engine draws a debug line for the projectile suggestion.
